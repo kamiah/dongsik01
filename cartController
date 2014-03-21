@@ -67,7 +67,7 @@ public class CartController
         return modelAndView;
     }
 
-//카트 확인 목록 보여주기
+//카트 확인 목록 보여주기----
     @RequestMapping(value="/cart/cartConfirm")
     public ModelAndView confirm(HttpSession session)
     {
