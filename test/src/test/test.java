@@ -3,6 +3,6 @@ package test;
 public class test {
 public static void main(String[] args) {
 	System.out.println("test2");
-	System.out.println("ÀßµÇ³ª Å×½ºÆ®");
+	System.out.println("í…ŒìŠ¤íŠ¸");
 }
 }
