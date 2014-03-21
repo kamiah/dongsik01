@@ -1,0 +1,95 @@
+@Controller
+public class CartController
+{
+
+   
+    @Autowired
+    private Shop shopService;
+ 
+    
+/*    public void setShopService(Shop shopService)
+    {
+        this.shopService = shopService;
+    }*/
+
+
+
+    //상품 상세 화면에서'카트에 넣기'버튼을 클릭할 때
+    @RequestMapping(value="/cart/cartAdd")
+    public ModelAndView add(Integer itemId, Integer quantity,HttpSession session){
+        
+       
+        // 추가 상품 정보를 취득
+        Item selectedItem=this.shopService.getItemByItemId(itemId);
+        //카트 취득
+        Cart cart=(Cart) session.getAttribute(WebConstants.CART_KEY);
+        if(cart==null){
+            cart=this.shopService.getCart();
+            session.setAttribute(WebConstants.CART_KEY, cart);
+        }
+        //카트에 상품을 추가
+        cart.push(new ItemSet(selectedItem, quantity));
+        //카트 정보 보여줄 페이지랑 메세지 설정
+        ModelAndView modelAndView=new ModelAndView("cart/cart");
+        modelAndView.addObject("message",selectedItem.getItemName()+"을"+quantity+"개 추가했습니다.");
+       
+        //헤더의 '카트확인하기'링크 클릭할 때
+        //로그인 유저 취득
+        User loginUser=(User)session.getAttribute(WebConstants.USER_KEY);
+        if(loginUser != null){
+            modelAndView.addObject("loginUser",loginUser);
+        }
+        return modelAndView;
+
+        
+    }
+    
+    //헤더의 '카트비우기'링크 클릭할때 
+    @RequestMapping(value="/cart/cartClear")
+    public ModelAndView clear(HttpSession session){
+        //카트 취득
+        Cart cart=(Cart)session.getAttribute(WebConstants.CART_KEY);
+        if(cart==null){
+            cart=this.shopService.getCart();
+            session.setAttribute(WebConstants.CART_KEY, cart);
+        }
+        //카트 클리어
+        cart.clearAll();
+        //메세지 설정
+        ModelAndView modelAndView=new ModelAndView("cart/cart");
+        modelAndView.addObject("message","카트를 비웠습니다.");
+        
+        //로그인 유저를 취득
+        User loginUser=(User)session.getAttribute(WebConstants.USER_KEY);
+        if(loginUser != null){
+            modelAndView.addObject("loginUser",loginUser);
+        }
+        return modelAndView;
+    }
+
+//카트 확인 목록 보여주기
+    @RequestMapping(value="/cart/cartConfirm")
+    public ModelAndView confirm(HttpSession session)
+    {
+      Cart cart=(Cart)session.getAttribute(WebConstants.CART_KEY);
+      if(cart==null){
+          cart=this.shopService.getCart();
+          session.setAttribute(WebConstants.CART_KEY, cart);
+      }
+      //카트 정보를 설정
+      ModelAndView modelAndView=new ModelAndView("cart/cart");
+      modelAndView.addObject("cart",cart);
+      
+      //로그인 유져 취득
+      User loginUser=(User)session.getAttribute(WebConstants.USER_KEY);
+      if(loginUser!=null){
+          modelAndView.addObject("loginUser",loginUser);
+      }
+      return modelAndView;
+      
+    }
+    
+
+
+ 
+}
